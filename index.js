@@ -8,7 +8,7 @@ bot.command('start', async (ctx) => {
         .text('HTML').text('CSS').row()
         .text('JavaScript').text('React').resized()
 
-    await ctx.reply('Привет!. Я помогу тебе подготовиться к собесу!!!')
+    await ctx.reply('Привет! Я помогу тебе подготовиться к собесу!!!')
     await ctx.reply('С какой темы начнём? Выбери тему внизу 👇', {
         reply_markup: keyboard
     })
@@ -22,6 +22,13 @@ bot.hears(['HTML', 'CSS', 'JavaScript', 'React'], async (ctx) => {
     await ctx.reply(`Что такое ${ctx.message.text}`, {
         reply_markup: inlineKeyboard
     })
+})
+
+bot.on('callback_query:data', async (ctx) => {
+    if (ctx.callbackQuery.data === 'cancel') {
+        await ctx.reply('Отмена')
+        await ctx.answerCallbackQuery()
+    }
 })
 
 bot.catch((err) => {
