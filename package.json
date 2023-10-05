@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Salman Khimishev",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.3.1",
-    "grammy": "^1.19.0"
+    "grammy": "^1.19.0",
+    "nodemon": "^3.0.1"
   }
 }
