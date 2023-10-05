@@ -1,10 +1,17 @@
 require('dotenv').config()
-const { Bot, GrammyError, HttpError } = require('grammy')
+const { Bot, Keyboard, GrammyError, HttpError } = require('grammy')
 
 const bot = new Bot(process.env.BOT_API_KEY)
 
 bot.command('start', async (ctx) => {
+    const keyboard = new Keyboard()
+        .text('HTML').text('CSS').row()
+        .text('JavaScript').text('React').resized()
+
     await ctx.reply('Привет!. Я помогу тебе подготовиться к собесу!!!')
+    await ctx.reply('С какой темы начнём? Выбери тему внизу 👇', {
+        reply_markup: keyboard
+    })
 })
 
 bot.catch((err) => {
