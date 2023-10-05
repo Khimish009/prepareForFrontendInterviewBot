@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { Bot, Keyboard, GrammyError, HttpError } = require('grammy')
+const { Bot, Keyboard, InlineKeyboard, GrammyError, HttpError } = require('grammy')
 
 const bot = new Bot(process.env.BOT_API_KEY)
 
@@ -11,6 +11,16 @@ bot.command('start', async (ctx) => {
     await ctx.reply('Привет!. Я помогу тебе подготовиться к собесу!!!')
     await ctx.reply('С какой темы начнём? Выбери тему внизу 👇', {
         reply_markup: keyboard
+    })
+})
+
+bot.hears(['HTML', 'CSS', 'JavaScript', 'React'], async (ctx) => {
+    const inlineKeyboard = new InlineKeyboard()
+        .text('Получить ответ', 'getAnswer')
+        .text('Отмена', 'cancel')
+
+    await ctx.reply(`Что такое ${ctx.message.text}`, {
+        reply_markup: inlineKeyboard
     })
 })
 
