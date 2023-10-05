@@ -16,7 +16,10 @@ bot.command('start', async (ctx) => {
 
 bot.hears(['HTML', 'CSS', 'JavaScript', 'React'], async (ctx) => {
     const inlineKeyboard = new InlineKeyboard()
-        .text('Получить ответ', 'getAnswer')
+        .text('Получить ответ', JSON.stringify({
+            type: ctx.message.text,
+            questionId: 1,
+        }))
         .text('Отмена', 'cancel')
 
     await ctx.reply(`Что такое ${ctx.message.text}`, {
@@ -28,7 +31,12 @@ bot.on('callback_query:data', async (ctx) => {
     if (ctx.callbackQuery.data === 'cancel') {
         await ctx.reply('Отмена')
         await ctx.answerCallbackQuery()
+        return
     }
+
+    const { type } = JSON.parse(ctx.callbackQuery.data)
+    await ctx.reply(`${type} - состовляющая фронтенда`)
+    await ctx.answerCallbackQuery()
 })
 
 bot.catch((err) => {
