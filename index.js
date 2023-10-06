@@ -7,7 +7,8 @@ const bot = new Bot(process.env.BOT_API_KEY)
 bot.command('start', async (ctx) => {
     const keyboard = new Keyboard()
         .text('HTML').text('CSS').row()
-        .text('JavaScript').text('React').resized()
+        .text('JavaScript').text('React').row()
+        .text('Случайный вопрос').resized()
 
     await ctx.reply('Привет! Я помогу тебе подготовиться к собесу!!!')
     await ctx.reply('С какой темы начнём? Выбери тему внизу 👇', {
@@ -15,9 +16,9 @@ bot.command('start', async (ctx) => {
     })
 })
 
-bot.hears(['HTML', 'CSS', 'JavaScript', 'React'], async (ctx) => {
+bot.hears(['HTML', 'CSS', 'JavaScript', 'React, Случайный вопрос'], async (ctx) => {
     const topic = ctx.message.text.toLowerCase()
-    const question = getRandomQuestion(topic)
+    const { question, questionTopic } = getRandomQuestion(topic)
     let inlineKeyboard
 
     if (question.hasOptions) {
@@ -25,7 +26,7 @@ bot.hears(['HTML', 'CSS', 'JavaScript', 'React'], async (ctx) => {
             InlineKeyboard.text(
                 option.text,
                 JSON.stringify({
-                    type: `${topic}-option`,
+                    type: `${questionTopic}-option`,
                     isCorrect: option.isCorrect,
                     questionId: question.id,
                 })
@@ -36,7 +37,7 @@ bot.hears(['HTML', 'CSS', 'JavaScript', 'React'], async (ctx) => {
     } else {
         inlineKeyboard = new InlineKeyboard()
             .text('Узнать ответ', JSON.stringify({
-                type: topic,
+                type: questionTopic,
                 questionId: question.id,
             }))
     }
