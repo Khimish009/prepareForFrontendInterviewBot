@@ -16,7 +16,7 @@ bot.command('start', async (ctx) => {
 })
 
 bot.hears(['HTML', 'CSS', 'JavaScript', 'React'], async (ctx) => {
-    const topic = ctx.message.text
+    const topic = ctx.message.text.toLowerCase()
     const question = getRandomQuestion(topic)
     let inlineKeyboard
 
@@ -47,20 +47,27 @@ bot.hears(['HTML', 'CSS', 'JavaScript', 'React'], async (ctx) => {
 })
 
 bot.on('callback_query:data', async (ctx) => {
-    const { type, questionId } = JSON.parse(ctx.callbackQuery.data)
+    const { type, questionId, isCorrect } = JSON.parse(ctx.callbackQuery.data)
+    const topic = type.includes('option') ? type.replace(/-option/, '') : type
+    const answer = getCorrectAnswer(topic, questionId)
 
     if (!type.includes('option')) {
-        const answer = getCorrectAnswer(type, questionId)
-
         await ctx.reply(answer, {
             parse_mode: 'HTML',
             disable_web_page_preview: true,
         })
         await ctx.answerCallbackQuery()
         return
-    } else {
-
     }
+
+    if (isCorrect) {
+        await ctx.reply('Верно ✅')
+        await ctx.answerCallbackQuery()
+        return
+    }
+
+    await ctx.reply(`Неверно ❌. Правильный ответ: ${answer}`)
+    await ctx.answerCallbackQuery()
 })
 
 bot.catch((err) => {
