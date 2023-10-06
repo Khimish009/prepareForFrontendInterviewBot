@@ -8,7 +8,7 @@ const getRandomQuestion = (topic) => {
 }
 
 const getCorrectAnswer = (topic, questionId) => {
-    const question = questions[topic].find(({ id }) => id === questionId)
+    const question = questions[topic.toLowerCase()].find(({ id }) => id === questionId)
 
     if (question.hasOptions) {
         return question.options.find(({ isCorrect }) => isCorrect).text
