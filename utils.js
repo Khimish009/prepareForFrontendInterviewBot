@@ -1,11 +1,11 @@
 const questions = require('./questions.json')
 
 const getRandomQuestion = (topic) => {
-    const questionTopic = topic
+    let questionTopic = topic
 
-    if (questionTopic === 'Случайный вопрос') {
+    if (questionTopic === 'случайный вопрос') {
         const questionKeys = Object.keys(questions)
-        questionTopic = questionKeys[Math.floor(Math.random() * questionKeys.length - 1)]
+        questionTopic = questionKeys[Math.floor(Math.random() * (questionKeys.length - 1))]
     }
 
     const randomQuestionIndex = Math.floor(Math.random() * questions[questionTopic].length)

@@ -16,7 +16,7 @@ bot.command('start', async (ctx) => {
     })
 })
 
-bot.hears(['HTML', 'CSS', 'JavaScript', 'React, Случайный вопрос'], async (ctx) => {
+bot.hears(['HTML', 'CSS', 'JavaScript', 'React', 'Случайный вопрос'], async (ctx) => {
     const topic = ctx.message.text.toLowerCase()
     const { question, questionTopic } = getRandomQuestion(topic)
     let inlineKeyboard
