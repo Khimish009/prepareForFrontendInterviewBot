@@ -1,6 +1,6 @@
 require('dotenv').config()
 const { Bot, Keyboard, InlineKeyboard, GrammyError, HttpError } = require('grammy')
-const { getRandomQuestion } = require('./utils')
+const { getRandomQuestion, getCorrectAnswer } = require('./utils')
 
 const bot = new Bot(process.env.BOT_API_KEY)
 
@@ -18,11 +18,28 @@ bot.command('start', async (ctx) => {
 bot.hears(['HTML', 'CSS', 'JavaScript', 'React'], async (ctx) => {
     const topic = ctx.message.text
     const question = getRandomQuestion(topic)
-    const inlineKeyboard = new InlineKeyboard()
-        .text('Узнать ответ', JSON.stringify({
-            type: topic,
-            questionId: question.id,
-        }))
+    let inlineKeyboard
+
+    if (question.hasOptions) {
+        const buttonRows = question.options.map(option => [
+            InlineKeyboard.text(
+                option.text,
+                JSON.stringify({
+                    type: `${topic}-option`,
+                    isCorrect: option.isCorrect,
+                    questionId: question.id,
+                })
+            )
+        ])
+
+        inlineKeyboard = InlineKeyboard.from(buttonRows)
+    } else {
+        inlineKeyboard = new InlineKeyboard()
+            .text('Узнать ответ', JSON.stringify({
+                type: topic,
+                questionId: question.id,
+            }))
+    }
 
     await ctx.reply(question.text, {
         reply_markup: inlineKeyboard
@@ -30,15 +47,20 @@ bot.hears(['HTML', 'CSS', 'JavaScript', 'React'], async (ctx) => {
 })
 
 bot.on('callback_query:data', async (ctx) => {
-    if (ctx.callbackQuery.data === 'cancel') {
-        await ctx.reply('Отмена')
+    const { type, questionId } = JSON.parse(ctx.callbackQuery.data)
+
+    if (!type.includes('option')) {
+        const answer = getCorrectAnswer(type, questionId)
+
+        await ctx.reply(answer, {
+            parse_mode: 'HTML',
+            disable_web_page_preview: true,
+        })
         await ctx.answerCallbackQuery()
         return
-    }
+    } else {
 
-    const { type } = JSON.parse(ctx.callbackQuery.data)
-    await ctx.reply(`${type} - состовляющая фронтенда`)
-    await ctx.answerCallbackQuery()
+    }
 })
 
 bot.catch((err) => {

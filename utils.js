@@ -7,6 +7,17 @@ const getRandomQuestion = (topic) => {
     return questions[questionTopic][randomQuestionIndex]
 }
 
+const getCorrectAnswer = (topic, questionId) => {
+    const question = questions[topic].find(({ id }) => id === questionId)
+
+    if (question.hasOptions) {
+        return question.options.find(({ isCorrect }) => isCorrect).text
+    } else {
+        return question.answer
+    }
+}
+
 module.exports = {
-    getRandomQuestion
+    getRandomQuestion,
+    getCorrectAnswer
 }
